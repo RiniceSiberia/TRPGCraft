@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "windmillbroken.trpgcraft.mixin",
+  "compatibilityLevel": "JAVA_18",
+  "mixins": [
+    "MixinPlayer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "trpgcraft.mixin_refmap.json",
+  "minVersion": "0.8"
+}

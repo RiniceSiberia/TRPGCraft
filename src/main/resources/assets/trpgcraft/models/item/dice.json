@@ -1,0 +1,74 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "trpgcraft:item/d1"
+    },
+    "overrides": [
+    {
+      "predicate": {
+        "trpgcraft:dice_value": 2,
+        "trpgcraft:dice_type": 0
+      },
+      "model": "trpgcraft:item/coin"
+    },
+    {
+      "predicate": {
+        "trpgcraft:dice_value": 3,
+        "trpgcraft:dice_type": 0
+      },
+      "model": "trpgcraft:item/d6_eternal"
+    },
+    {
+      "predicate": {
+        "trpgcraft:dice_value": 4,
+        "trpgcraft:dice_type": 0
+      },
+      "model": "trpgcraft:item/d4"
+    },
+    {
+      "predicate": {
+        "trpgcraft:dice_value": 6,
+        "trpgcraft:dice_type": 0
+      },
+      "model": "trpgcraft:item/d6"
+    },
+    {
+      "predicate": {
+        "trpgcraft:dice_value": 8,
+        "trpgcraft:dice_type": 0
+      },
+      "model": "trpgcraft:item/d8"
+    },
+      {"predicate": {
+        "trpgcraft:dice_value": 10,
+        "trpgcraft:dice_type": 0
+      },
+        "model": "trpgcraft:item/d10"
+      },
+      {"predicate": {
+        "trpgcraft:dice_value": 12,
+        "trpgcraft:dice_type": 0
+      },
+        "model": "trpgcraft:item/d12"
+      },
+      {"predicate": {
+        "trpgcraft:dice_value": 20,
+        "trpgcraft:dice_type": 0
+      },
+        "model": "trpgcraft:item/d20"
+      },
+      {"predicate": {
+        "trpgcraft:dice_value": 100,
+        "trpgcraft:dice_type": 0
+      },
+        "model": "trpgcraft:item/d100"
+    },
+      {
+        "predicate": {
+          "trpgcraft:dice_type": 1,
+          "trpgcraft:dice_value": 0
+        },
+        "model": "trpgcraft:item/static_dice"
+      }
+    ]
+}

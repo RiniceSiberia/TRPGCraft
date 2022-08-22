@@ -1,0 +1,38 @@
+{
+  "roll": {
+    "subtitle": "trpgcraft.sound.roll",
+    "sounds": [
+      "trpgcraft:single_roll"
+    ]
+  },
+  "multi_roll": {
+    "subtitle": "trpgcraft.sound.multi_roll",
+    "sounds": [
+      "trpgcraft:multi_roll"
+    ]
+  },
+  "success": {
+    "subtitle": "trpgcraft.sound.success",
+    "sounds": [
+      "trpgcraft:success"
+    ]
+  },
+  "success_critical": {
+    "subtitle": "trpgcraft.sound.success_critical",
+    "sounds": [
+      "trpgcraft:success_critical"
+    ]
+  },
+  "failure": {
+    "subtitle": "trpgcraft.sound.failure",
+    "sounds": [
+      "trpgcraft:failure"
+    ]
+  },
+  "failure_critical": {
+    "subtitle": "trpgcraft.sound.failure_critical",
+    "sounds": [
+      "trpgcraft:failure_critical"
+    ]
+  }
+}

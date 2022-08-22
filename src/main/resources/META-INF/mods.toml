@@ -1,0 +1,64 @@
+# This is an example mods.toml file. It contains the data relating to the loading mods.
+# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
+# The overall format is standard TOML format, v0.5.0.
+# Note that there are a couple of TOML lists in this file.
+# Find more information on toml format here:  https://github.com/toml-lang/toml
+# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml" #mandatory
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+loaderVersion="[40,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+# The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
+# Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
+license="Prohibit distribute and modify code"
+# A URL to refer people to when problems occur with this mod
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+# The modid of the mod
+modId="trpgcraft" #mandatory
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+# ${file.jarVersion} will substitute the value of the Implementation-Version as read from the mod's JAR file metadata
+# see the associated build.gradle script for how to populate this completely automatically during a build
+version="1.0" #mandatory
+# A display name for the mod
+displayName="trpgCraft" #mandatory
+# A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+# A URL for the "homepage" for this mod, displayed in the mod UI
+displayURL="https://space.bilibili.com/824882" #optional
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile="trpgcraft.png" #optional
+# A text field displayed in the mod UI
+credits="Rinice Alom Xiberia,Quixote Ajenjo" #optional
+# A text field displayed in the mod UI
+authors="牧序" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+-谔谔,这是一段又长又没用的屁话，纯粹是为了提醒mod作者这儿是写描述的，以便日后填个什么文雅的词儿上去。
+-本MOD是B站@牧序Channel在上班摸鱼期间为了找乐子制作的不开源的完全自嗨式的COC跑团mod，禁止任何人以任何形式将本mod的文件(不含视频，文字，音频，replay)进行二次传播和破解。
+-如果你有更好的想法，欢迎对本mod作者进行指点，但如果你要对作者指指点点，我建议你不要给我提建议。
+-禁止本mod的使用者利用本mod做出可能违反中华人民共和国法律的行为，或者拿来搞一些不负责任的小动作。如有违反，本作者不负任何责任。当然，你不违反我也不会负任何责任的，血别溅到我脸上就行。
+-只要是本mod出现的场合，禁止涉及任何现实金钱因素，比如，公开兜售这份不属于你的mod文件，或者在用这个mod做的跑团视频里挂广告。
+-补充上面那段，如果你买到了这份mod，请拿着消费凭证来找我，我会在确认事实后全额退还你那个黑心商人收你的钱，然后对那个mod贩子进行一场外科手术式的盒打击，联系方式点链接。
+-如果你真的很想触碰一下作者的米线，请记住一件事，我是你爹
+'''
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.trpgcraft]] #optional
+# the modid of the dependency
+modId="forge" #mandatory
+# Does this dependency have to exist - if not, ordering below must be specified
+mandatory=true #mandatory
+# The version range of the dependency
+versionRange="[40,)" #mandatory
+# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+ordering="NONE"
+# Side this dependency is applied on - BOTH, CLIENT or SERVER
+side="BOTH"
+# Here's another dependency
+[[dependencies.trpgcraft]]
+modId="minecraft"
+mandatory=true
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+versionRange="[1.18.2,1.19)"
+ordering="NONE"
+side="BOTH"

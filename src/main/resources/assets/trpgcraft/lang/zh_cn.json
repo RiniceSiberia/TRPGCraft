@@ -1,0 +1,67 @@
+{
+  "item.trpgcraft.slaanesh_sword": "色孽神剑",
+  "item.trpgcraft.d1": "D1",
+  "item.trpgcraft.d2": "硬币",
+  "item.trpgcraft.d4": "D4",
+  "item.trpgcraft.d6": "D6",
+  "item.trpgcraft.d8": "D8",
+  "item.trpgcraft.d10": "D10",
+  "item.trpgcraft.d12": "D12",
+  "item.trpgcraft.d20": "D20",
+  "item.trpgcraft.d100": "D100",
+  "item.trpgcraft.character_sheet": "角色卡",
+
+  "tip.infinity": "M.U.G.E.N.",
+
+  "item.trpgcraft.dice": "骰子",
+  "item.trpgcraft.dice.desc": "这是一个{1}面骰，可以投出{0}~{1}之间的数字。",
+  "item.trpgcraft.dice.static": "常量骰",
+  "item.trpgcraft.dice.static.desc": "这是一个常量骰，无论做什么，都只会投出{0}点。",
+  "item.trpgcraft.dice.cheat": "作弊骰",
+  "item.trpgcraft.dice.cheat.desc": "这是一个作弊骰，虽然他看上去有点像普通骰子，/n但他可以根据NBT投出指定范围内的数字——即使是骰子上没有的数字。",
+
+  "trpgcraft.sheet.title": "{0}的角色卡:",
+  "trpgcraft.sheet.attribute.message": "{0}属性为:{1}",
+  "gui.trpgcraft.sheet": "",
+  "gui.trpgcraft.testmessage": "测试语句",
+
+  "trpgcraft.roll.success": "成功",
+  "trpgcraft.roll.failure": "失败",
+  "trpgcraft.roll.success.critical": "大成功",
+  "trpgcraft.roll.failure.critical": "大失败",
+
+  "trpgcraft.error": "错误",
+
+  "attribute.trpgcraft.name.str": "力量",
+  "attribute.trpgcraft.name.con": "体质",
+  "attribute.trpgcraft.name.siz": "体型",
+
+  "attribute.trpgcraft.name.dex": "敏捷",
+  "attribute.trpgcraft.name.app": "魅力",
+  "attribute.trpgcraft.name.int": "智力",
+  "attribute.trpgcraft.name.pow": "意志",
+  "attribute.trpgcraft.name.edu": "教育",
+
+  "attribute.trpgcraft.name.sanity": "SAN值",
+
+  "tips.trpgcraft.sex.male":"男",
+  "tips.trpgcraft.sex.female":"女",
+  "tips.trpgcraft.sex.both":"双",
+  "tips.trpgcraft.sex.else":"其他",
+
+  "message.trpgcraft.roll": "骰子投出了 {0} 点！",
+  "message.trpgcraft.roll.success": "骰子投出了 {0} 点！成功了！",
+  "message.trpgcraft.roll.failure": "骰子投出了 {0} 点！失败了！",
+  "message.trpgcraft.roll.success.critical": "骰子投出了 {0} 点！成功了！即将爆出绝杀！",
+  "message.trpgcraft.roll.failure.critical": "骰子投出了 {0} 点！失败了！即将整出绝活！",
+
+
+
+  "message.trpgcraft.dice_cold_weapon.attack_damage": "+ {0} + {1} DB",
+
+
+  "itemGroup.trpgcraft_group": "桌游纪元"
+
+
+
+}
