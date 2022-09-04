@@ -13,7 +13,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
-import windmillbroken.trpgcraft.attribute.TrpgCraftAttributes;
+import windmillbroken.trpgcraft.event.ContainerTypeRegistry;
 import windmillbroken.trpgcraft.item.DiceItems;
 import windmillbroken.trpgcraft.item.TrpgCraftItems;
 import windmillbroken.trpgcraft.sound.TrpgCraftSounds;
@@ -38,8 +38,8 @@ public class trpgcraft {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         //加载item
         TrpgCraftItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ContainerTypeRegistry.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         DiceItems.DICES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        TrpgCraftAttributes.ATTRIBUTE.register(FMLJavaModLoadingContext.get().getModEventBus());
         TrpgCraftSounds.SOUNDS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
 

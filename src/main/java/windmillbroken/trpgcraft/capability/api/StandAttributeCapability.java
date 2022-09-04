@@ -14,6 +14,13 @@ import java.util.List;
  * @Message: Have a good time!  :)
  **/
 public interface StandAttributeCapability extends INBTSerializable<CompoundTag> {
+
+    public int getSkillValueByIndex(int index);
+
+    public void addLuck(int value);
+
+    public void reduceLuck(int value);
+
     public void addMp(int value);
 
     public void reduceMp(int value);
@@ -53,6 +60,10 @@ public interface StandAttributeCapability extends INBTSerializable<CompoundTag> 
     public int getEdu();
 
     public void setEdu(int edu);
+
+    public int getLuck();
+
+    public void setLuck(int luck);
 
     public int getBuild();
 

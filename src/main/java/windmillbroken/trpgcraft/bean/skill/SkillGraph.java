@@ -220,6 +220,16 @@ public class SkillGraph {
         return ret;
     }
 
+    public Map<Integer,SkillNode> getHasStudiedSkill(){
+        Map<Integer,SkillNode> map = new HashMap<>();
+        for (Integer skillId: this.vertex.keySet()){
+            if (vertex.get(skillId).getSkillValue() > 0){
+                map.put(skillId,vertex.get(skillId));
+            }
+        }
+        return map;
+    }
+
     public int getSkillValueMax(String skillNodeName){
         if (vertex.containsKey(skillNodeName)) {
             return vertex.get(skillNodeName).getSkillMaxValue();

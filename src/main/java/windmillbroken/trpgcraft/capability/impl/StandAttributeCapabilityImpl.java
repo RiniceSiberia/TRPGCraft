@@ -7,6 +7,8 @@ import windmillbroken.trpgcraft.util.AttributeUtils;
 
 import java.util.List;
 
+import static windmillbroken.trpgcraft.util.AttributeUtils.*;
+
 
 /**
  * 使用IDEA编写
@@ -25,9 +27,8 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
     private int inte;
     private int pow;
     private int edu;
-
-    //基础八属性，不含幸运
-
+    private int luck;
+    //基础九属性
 
     private int build;
     //体型
@@ -42,19 +43,14 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
     private int sanity;
     //理智
 
-    public static final String STR = "str";
-    public static final String CON = "con";
-    public static final String SIZ = "siz";
-    public static final String DEX = "dex";
-    public static final String APP = "app";
-    public static final String INTE = "inte";
-    public static final String POW = "pow";
-    public static final String EDU = "edu";
     public static final String BUILD = "build";
     public static final String DB = "db";
     public static final String MP = "mp";
     public static final String MP_LIMIT = "mp_limit";
     public static final String SANITY = "sanity";
+
+
+
 
 
     public StandAttributeCapabilityImpl(){
@@ -67,13 +63,45 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
         setInte(50);
         setPow(50);
         setEdu(50);
+        setLuck(50);
+    }
+
+    @Override
+    public int getSkillValueByIndex(int index){
+        if (index == STR_INDEX){
+            return getStr();
+        }else if (index == CON_INDEX){
+            return getCon();
+        }else if (index == SIZ_INDEX){
+            return getSiz();
+        }else if (index == DEX_INDEX){
+            return getDex();
+        }else if (index == APP_INDEX){
+            return getApp();
+        }else if (index == INTE_INDEX){
+            return getInte();
+        }else if (index == POW_INDEX){
+            return getPow();
+        }else if (index == EDU_INDEX){
+            return getEdu();
+        }
+        return getLuck();
+    }
+
+
+
+    @Override
+    public void addLuck(int value) {
+        this.luck += value;
+    }
+
+    @Override
+    public void reduceLuck(int value) {
+        addLuck(-value);
     }
 
     @Override
     public void addMp(int value){
-        if (value <= 0) {
-            return;
-        }
         this.mp += value;
         if (this.mp > this.mpLimit){
             this.mp = this.mpLimit;
@@ -81,19 +109,10 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
     }
     @Override
     public void reduceMp(int value){
-        if (value >= 0) {
-            return;
-        }
-        this.mp -= value;
-        if (this.mp < 0){
-            this.mp = 0;
-        }
+        addMp(-value);
     }
     @Override
     public void addSanity(int value){
-        if (value <= 0) {
-            return;
-        }
         this.sanity += value;
         if (this.sanity > this.mpLimit){
             this.sanity = this.mpLimit;
@@ -101,13 +120,7 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
     }
     @Override
     public void reduceSanity(int value){
-        if (value >= 0) {
-            return;
-        }
-        this.sanity -= value;
-        if (this.sanity < 0){
-            this.sanity = 0;
-        }
+        addSanity(-value);
     }
 
 
@@ -183,6 +196,15 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
         this.edu = edu;
     }
     @Override
+    public int getLuck() {
+        return luck;
+    }
+    @Override
+    public void setLuck(int luck) {
+        this.luck = luck;
+    }
+
+    @Override
     public int getBuild() {
         return build;
     }
@@ -224,14 +246,15 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(STR,str);
-        tag.putInt(CON,con);
-        tag.putInt(SIZ,siz);
-        tag.putInt(DEX,dex);
-        tag.putInt(APP,app);
-        tag.putInt(INTE,inte);
-        tag.putInt(POW,pow);
-        tag.putInt(EDU,edu);
+        tag.putInt(STR_NAME,str);
+        tag.putInt(CON_NAME,con);
+        tag.putInt(SIZ_NAME,siz);
+        tag.putInt(DEX_NAME,dex);
+        tag.putInt(APP_NAME,app);
+        tag.putInt(INTE_NAME,inte);
+        tag.putInt(POW_NAME,pow);
+        tag.putInt(EDU_NAME,edu);
+        tag.putInt(LUCK_NAME,luck);
         tag.putInt(MP,mp);
         tag.putInt(MP_LIMIT,mpLimit);
         tag.putInt(SANITY,sanity);
@@ -240,14 +263,15 @@ public class StandAttributeCapabilityImpl implements StandAttributeCapability {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        setStr(nbt.getInt(STR));
-        setCon(nbt.getInt(CON));
-        setSiz(nbt.getInt(SIZ));
-        setDex(nbt.getInt(DEX));
-        setApp(nbt.getInt(APP));
-        setInte(nbt.getInt(INTE));
-        setPow(nbt.getInt(POW));
-        setEdu(nbt.getInt(EDU));
+        setStr(nbt.getInt(STR_NAME));
+        setCon(nbt.getInt(CON_NAME));
+        setSiz(nbt.getInt(SIZ_NAME));
+        setDex(nbt.getInt(DEX_NAME));
+        setApp(nbt.getInt(APP_NAME));
+        setInte(nbt.getInt(INTE_NAME));
+        setPow(nbt.getInt(POW_NAME));
+        setEdu(nbt.getInt(EDU_NAME));
+        setLuck(nbt.getInt(LUCK_NAME));
         setMpLimit(nbt.getInt(MP_LIMIT));
         setMp(nbt.getInt(MP));
         setSanity(nbt.getInt(SANITY));

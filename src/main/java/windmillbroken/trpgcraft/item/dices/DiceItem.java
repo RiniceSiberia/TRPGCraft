@@ -57,40 +57,40 @@ public class DiceItem extends Item{
 
     }
 
-    public Optional<DiceCapability> getCap(ItemStack stack){
+    public static Optional<DiceCapability> getCap(ItemStack stack){
         return stack.getCapability(DICE_CAPABILITY).resolve();
     }
 
-    public int roll(ItemStack stack){
+    public static int roll(ItemStack stack){
         return getCap(stack).map(DiceCapability::roll).orElse(0);
     }
 
-    public void setDice(ItemStack stack, Dice dice){
+    public static void setDice(ItemStack stack, Dice dice){
         List<Dice> diceList = new ArrayList<>();
         diceList.add(dice);
         getCap(stack).ifPresent(cap->cap.setDice(diceList));
     }
 
-    public Dice getDice(ItemStack stack){
+    public static Dice getDice(ItemStack stack){
         return getCap(stack).map(cap->cap.getDice().get(0)).orElse(null);
     }
 
-    public DiceTypeEnum getDiceType(ItemStack stack){
+    public static DiceTypeEnum getDiceType(ItemStack stack){
         return getCap(stack).map(cap->cap.getDice().get(0).getType()).orElse(null);
     }
 
-    public int getDiceValue(ItemStack stack){
+    public static int getDiceValue(ItemStack stack){
         return getCap(stack).map(cap->cap.getDice().get(0).getDiceValue()).orElse(0);
     }
 
-    public Dice popDice(ItemStack stack){
+    public static Dice popDice(ItemStack stack){
         return getCap(stack).map(cap->cap.popDice()).orElse(null);
     }
 
-    public int getDiceValueMax(ItemStack stack){
+    public static int getDiceValueMax(ItemStack stack){
         return getCap(stack).map(DiceCapability::getDiceValueMax).orElse(0);
     }
-    public int getDiceValueMin(ItemStack stack){
+    public static int getDiceValueMin(ItemStack stack){
         return getCap(stack).map(DiceCapability::getDiceValueMin).orElse(0);
     }
 
@@ -105,7 +105,7 @@ public class DiceItem extends Item{
         //4.0F / (world.getRandom().nextFloat() * 1.0F + 7.5F
 
         int roll = roll(stack);
-        Component component =new TranslatableComponent(Utils.MESSAGE + ".roll",roll);
+        Component component =new TranslatableComponent(Utils.message("roll"),roll);
         if (world.isClientSide()){
             //只在客户端处理不在多人world
             if(server != null){
@@ -113,6 +113,8 @@ public class DiceItem extends Item{
             }else {
                 player.sendMessage(component,Util.NIL_UUID);
             }
+
+
         }
         return super.use(world, player, interactionHand);
     }
@@ -127,10 +129,10 @@ public class DiceItem extends Item{
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level world,List<Component> components,TooltipFlag tooltipFlag) {
         super.appendHoverText(itemStack, world, components, tooltipFlag);
-        if (this.getDiceType(itemStack) == DiceTypeEnum.CONSTANT){
-            components.add(new TranslatableComponent(Utils.ITEM + "dice.static.desc",this.getDiceValueMax(itemStack)));
+        if (getDiceType(itemStack) == DiceTypeEnum.CONSTANT){
+            components.add(new TranslatableComponent(Utils.ITEM + "dice.static.desc",getDiceValueMax(itemStack)));
         }else {
-            components.add(new TranslatableComponent(Utils.ITEM + "dice.desc", this.getDiceValueMin(itemStack), this.getDiceValueMax(itemStack)));
+            components.add(new TranslatableComponent(Utils.ITEM + "dice.desc", getDiceValueMin(itemStack), getDiceValueMax(itemStack)));
         }
     }
 

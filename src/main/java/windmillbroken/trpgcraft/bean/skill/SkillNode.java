@@ -1,6 +1,8 @@
 package windmillbroken.trpgcraft.bean.skill;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import windmillbroken.trpgcraft.util.Utils;
 
 
 public class SkillNode {
@@ -33,6 +35,10 @@ public class SkillNode {
 
     public String getSkillName() {
         return skillName;
+    }
+
+    public Component getSkillNameComponent(){
+        return new TranslatableComponent(Utils.SKILL+skillName);
     }
 
     public void setSkillName(String skillName) {

@@ -25,10 +25,19 @@
   "gui.trpgcraft.sheet": "",
   "gui.trpgcraft.testmessage": "测试语句",
 
+  "trpgcraft.roll.message": "骰子投出了 {0} 点！",
+
   "trpgcraft.roll.success": "成功",
   "trpgcraft.roll.failure": "失败",
   "trpgcraft.roll.success.critical": "大成功",
   "trpgcraft.roll.failure.critical": "大失败",
+
+  "trpgcraft.roll.success.message": "{0}进行{1}检定 {2}/{3} 成功了！",
+  "trpgcraft.roll.failure.message": "{0}进行{1}检定 {2}/{3} 失败了！",
+  "trpgcraft.roll.success.critical.message": "{0}进行{1}检定 {2}/{3} 即将爆出绝杀！",
+  "trpgcraft.roll.failure.critical.message": "{0}进行{1}检定 {2}/{3} 即将整出绝活！",
+
+  "trpgcraft.roll.error.message": "{0}进行{1}检定 {2}/{3} 出现错误",
 
   "trpgcraft.error": "错误",
 
@@ -49,16 +58,12 @@
   "tips.trpgcraft.sex.both":"双",
   "tips.trpgcraft.sex.else":"其他",
 
-  "message.trpgcraft.roll": "骰子投出了 {0} 点！",
-  "message.trpgcraft.roll.success": "骰子投出了 {0} 点！成功了！",
-  "message.trpgcraft.roll.failure": "骰子投出了 {0} 点！失败了！",
-  "message.trpgcraft.roll.success.critical": "骰子投出了 {0} 点！成功了！即将爆出绝杀！",
-  "message.trpgcraft.roll.failure.critical": "骰子投出了 {0} 点！失败了！即将整出绝活！",
 
 
+  "trpgcraft.dice_cold_weapon.attack_damage.message": "+ {0} + {1} DB",
 
-  "message.trpgcraft.dice_cold_weapon.attack_damage": "+ {0} + {1} DB",
 
+  "trpgcraft.skill.math": "数学",
 
   "itemGroup.trpgcraft_group": "桌游纪元"
 

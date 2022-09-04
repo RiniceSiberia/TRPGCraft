@@ -6,7 +6,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import windmillbroken.trpgcraft.capability.provider.DiceProvider;
 import windmillbroken.trpgcraft.item.DiceItems;
 import windmillbroken.trpgcraft.util.Utils;
 

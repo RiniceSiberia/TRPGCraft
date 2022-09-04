@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import windmillbroken.trpgcraft.capability.api.SkillCapability;
 import windmillbroken.trpgcraft.capability.api.StandAttributeCapability;
@@ -14,8 +15,10 @@ import windmillbroken.trpgcraft.bean.skill.SkillGraph;
 import windmillbroken.trpgcraft.bean.skill.SkillNode;
 import windmillbroken.trpgcraft.bean.dice.Dice;
 import windmillbroken.trpgcraft.bean.dice.DiceTypeEnum;
+import windmillbroken.trpgcraft.util.AttributeUtils;
 
 import java.util.*;
+import static windmillbroken.trpgcraft.util.AttributeUtils.*;
 
 
 /**
@@ -79,14 +82,18 @@ public class SkillCapabilityImpl implements SkillCapability {
      *
      **/
     @Override
-    public List<Integer> rollSkillIds(int num, int edu) {
+    public List<Integer> rollSkillIds(int num, int edu, Entity entity) {
         int rare = -1;
         CheckResultEnum result = CheckResultEnum.SUCCESS;
         Dice dice = new DiceImpl(100, DiceTypeEnum.NORMAL);
         while (result.equals(CheckResultEnum.SUCCESS) || result.equals(CheckResultEnum.CRITICAL_SUCCESS)){
             rare++;
-            result = CheckResultEnum.skillCheck(dice,edu);
-
+            result = CheckResultEnum.skillCheck(
+                    dice,
+                    AttributeUtils.getAttComponentByIndex(EDU_INDEX),
+                    edu,
+                    entity.level,
+                    entity);
         }
         List<Integer> skillNodeIdsGraph = this.skillGraph.getBottomSkillNode(rare);
         List<Integer> list = new ArrayList<>();

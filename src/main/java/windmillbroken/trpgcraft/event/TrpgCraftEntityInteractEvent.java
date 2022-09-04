@@ -29,7 +29,8 @@ public class TrpgCraftEntityInteractEvent {
             if (player.getMainHandItem().getItem() instanceof CharacterSheet
             && entity.getCapability(PlayerSkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve().isPresent()) {
                 if (world.isClientSide()){
-                    CharacterSheet.openSheetGui(player);
+                    entity.getId();
+                    CharacterSheet.openSheetGui(player,entity,event.getWorld());
                     if(server != null){
                         //多人模式
                     }else {

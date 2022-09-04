@@ -1,5 +1,7 @@
 package windmillbroken.trpgcraft.util;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import windmillbroken.trpgcraft.bean.dice.Dice;
 import windmillbroken.trpgcraft.bean.dice.DiceImpl;
 import windmillbroken.trpgcraft.bean.dice.DiceTypeEnum;
@@ -22,8 +24,28 @@ public class AttributeUtils {
     private static final int D = 125;
     private static final int E = 165;
     private static final int F = 205;
+    //体型相关
 
+    public static final String STR_NAME = "str";
+    public static final String CON_NAME = "con";
+    public static final String SIZ_NAME = "siz";
+    public static final String DEX_NAME = "dex";
+    public static final String APP_NAME = "app";
+    public static final String INTE_NAME = "inte";
+    public static final String POW_NAME = "pow";
+    public static final String EDU_NAME = "edu";
+    public static final String LUCK_NAME = "luck";
 
+    public static final int STR_INDEX = 0;
+    public static final int CON_INDEX = 1;
+    public static final int SIZ_INDEX = 2;
+    public static final int DEX_INDEX = 3;
+    public static final int APP_INDEX = 4;
+    public static final int INTE_INDEX = 5;
+    public static final int POW_INDEX = 6;
+    public static final int EDU_INDEX = 7;
+    public static final int LUCK_INDEX = 8;
+    //基础属性相关
 
 
     public static int getBuild(int str,int siz){
@@ -74,6 +96,23 @@ public class AttributeUtils {
                 }
         }
         return diceList;
+    }
+    public static String getAttStringNameByIndex(int index){
+        return switch (index) {
+            case STR_INDEX -> STR_NAME;
+            case CON_INDEX -> CON_NAME;
+            case SIZ_INDEX -> SIZ_NAME;
+            case DEX_INDEX -> DEX_NAME;
+            case APP_INDEX -> APP_NAME;
+            case INTE_INDEX -> INTE_NAME;
+            case POW_INDEX -> POW_NAME;
+            case EDU_INDEX -> EDU_NAME;
+            default -> LUCK_NAME;
+        };
+    }
+    public static Component getAttComponentByIndex(int index){
+        return new TranslatableComponent(
+                Utils.ATTRIBUTE_NAME + getAttStringNameByIndex(index));
     }
 
 }

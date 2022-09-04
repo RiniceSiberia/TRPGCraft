@@ -47,7 +47,7 @@ public class TrpgCraftEventHandler {
                 String attackDamageName = I18n.get("attribute.name.generic.attack_damage");
                 if (component.getString().contains(attackDamageName)) {
                     event.getToolTip().set(x,new TranslatableComponent(
-                            Utils.MESSAGE+".dice_cold_weapon.attack_damage",
+                            Utils.message("dice_cold_weapon.attack_damage"),
                             TextUtil.diceListToComponent(weapon.getDamageDice(event.getItemStack())).getString(),
                             //攻击伤害
                             weapon.getDbRatio()
