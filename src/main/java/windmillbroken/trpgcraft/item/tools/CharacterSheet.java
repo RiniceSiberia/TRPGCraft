@@ -113,7 +113,7 @@ public class CharacterSheet extends Item {
                 };
                 NetworkHooks.openGui((ServerPlayer) player, container,
                         buf -> buf.writeNbt(nbt));
-                player.openMenu(container);
+//                player.openMenu(container);
 //            }else if (player instanceof LocalPlayer localPlayer){
 //                MenuProvider container = new SimpleMenuProvider(
 //                        (windowId, playerInventory, playerEntity) ->

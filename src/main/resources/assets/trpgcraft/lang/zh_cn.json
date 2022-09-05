@@ -47,9 +47,11 @@
 
   "attribute.trpgcraft.name.dex": "敏捷",
   "attribute.trpgcraft.name.app": "魅力",
-  "attribute.trpgcraft.name.int": "智力",
+  "attribute.trpgcraft.name.inte": "智力",
+
   "attribute.trpgcraft.name.pow": "意志",
   "attribute.trpgcraft.name.edu": "教育",
+  "attribute.trpgcraft.name.luck": "幸运",
 
   "attribute.trpgcraft.name.sanity": "SAN值",
 

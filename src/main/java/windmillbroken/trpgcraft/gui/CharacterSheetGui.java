@@ -9,21 +9,16 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 import windmillbroken.trpgcraft.bean.description.Description;
 import windmillbroken.trpgcraft.bean.skill.SkillGraph;
 import windmillbroken.trpgcraft.util.AttributeUtils;
 import windmillbroken.trpgcraft.util.Utils;
-
-import java.util.Objects;
+import static windmillbroken.trpgcraft.gui.CharacterSheetMenu.*;
 
 /**
  *
@@ -48,20 +43,23 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
 //    ForgeSlider forgeSlider;
 
     //Forge的滑动条
+    private static final int BACKGROUND_REAL_WIDTH = 300;
+    private static final int BACKGROUND_REAL_HEIGHT = 220;
 
-    private static final int BACKGROUND_WIDTH = 600;
-    private static final int BACKGROUND_HEIGHT = 376;
 
-    private static final int SKILL_SCROLLER_WIDTH = 16;
-    private static final int SKILL_SCROLLER_HEIGHT = 24;
+    private static final int BACKGROUND_RENDER_WIDTH = 199;
+    private static final int BACKGROUND_RENDER_HEIGHT = 220;
 
-    private static final int SKILL_SCROLLER_START_FIX_X = 571;
-    private static final int SKILL_SCROLLER_START_FIX_Y = 36;
+//    private static final int SKILL_SCROLLER_WIDTH = 16;
+//    private static final int SKILL_SCROLLER_HEIGHT = 24;
 
-    private static final int SKILL_SCROLLER_RANGE_Y = 111;
+//    private static final int SKILL_SCROLLER_START_FIX_X = 571;
+//    private static final int SKILL_SCROLLER_START_FIX_Y = 36;
+//
+//    private static final int SKILL_SCROLLER_RANGE_Y = 111;
 
-    private static final int SLOT_WIDTH = 32;
-    private static final int SLOT_HEIGHT = 32;
+
+
 
     private static final int ATT_BUTTON_NUM = 9;
     //按钮数量
@@ -69,15 +67,9 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
     private static final int ATT_BUTTON_COL = ATT_BUTTON_NUM / ATT_BUTTON_ROW;
     private static final int ATT_BUTTON_TYPE = 3;
 
-    private static final int ATT_BUTTON_MIDDLE_FIX_X= -112;
-    //按钮在x轴的起始位置基于中心点的修正
-    private static final int ATT_BUTTON_MIDDLE_FIX_Y = -76;
-    //按钮在y轴的起始位置基于中心点的修正
 
-    private static final int ATT_BUTTON_PADDING_X = 96;
-    //按钮的x轴间距
-    private static final int ATT_BUTTON_PADDING_Y = 32;
-    //按钮的y轴间距
+
+
 
 
     private boolean scrolling;
@@ -133,9 +125,11 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
     public CharacterSheetGui(CharacterSheetMenu menu, Inventory inv, Component titleIn) {
         super(menu,inv,titleIn);
         this.component = titleIn;
-        --this.titleLabelY;
         this.scrollOffs = 0.0F;
         this.startIndex = 0;
+        inventoryLabelY += 100;
+        this.imageWidth = BACKGROUND_RENDER_WIDTH;
+        this.imageHeight = BACKGROUND_RENDER_HEIGHT;
 //
 //        if (entity.getCapability(PlayerSkillProvider.DESCRIPTION_CAPABILITY).isPresent()){
 //            //描述
@@ -217,24 +211,22 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
             for (int col = 0;col <ATT_BUTTON_COL; col++){
                 for (int type = 0; type < ATT_BUTTON_TYPE; type++){
                     int width = SLOT_WIDTH;
-                    int height = SLOT_HEIGHT/2;
+                    int height = SLOT_HEIGHT /2;
                     if (type >0){
                         //2号和3号，小号按钮,宽度/2
                         width /= 2;
                     }
-                    int middleX = (this.width - width)/2;
-                    int middleY = (this.height - height)/2;
-                    //确定中心点，上下左右飘动方便
-                    int xPos = middleX + row * ATT_BUTTON_PADDING_X + ATT_BUTTON_MIDDLE_FIX_X;
-                    int yPos = middleY + col * ATT_BUTTON_PADDING_Y + ATT_BUTTON_MIDDLE_FIX_Y;
+                    int xPos = this.leftPos + ATT_SLOT_FIX_X + row * ATT_BUTTON_PADDING_X - SLOT_WIDTH;
+                    int yPos = this.topPos + ATT_SLOT_FIX_Y + col * ATT_BUTTON_PADDING_Y;
                     if (type > 0){
-                        yPos += SLOT_HEIGHT/2;
+                        yPos += SLOT_HEIGHT /2;
                         if (type > 1){
-                            xPos += SLOT_WIDTH/2;
+                            xPos += SLOT_WIDTH /2;
                         }
                     }
                     int attIndex = row + col * ATT_BUTTON_ROW;
-                    Component component = AttributeUtils.getAttComponentByIndex(attIndex);
+//                    Component component = AttributeUtils.getAttComponentByIndex(attIndex);
+                    Component component = new TextComponent("");
                     int finalType = type;
                     this.attributeButtons[attIndex][type] = new Button(
                             xPos,
@@ -245,8 +237,7 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
                             (button) -> {
                                 this.menu.buttonAction(attIndex, finalType);
                             },
-                            (button,matrix,x,y) -> {
-                            }
+                            Button.NO_TOOLTIP
                     );
 
                     this.addWidget(this.attributeButtons[attIndex][type]);
@@ -304,7 +295,6 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
     @Override
     public void render(@NotNull PoseStack transform, int mouseX, int mouseY, float partialTicks) {
         super.render(transform, mouseX, mouseY, partialTicks);
-        this.renderTooltip(transform, mouseX, mouseY);
         //标题渲染
         for (Button[] a : this.attributeButtons){
             //属性检定按钮渲染
@@ -312,6 +302,8 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
                 b.render(transform,mouseX,mouseY,partialTicks);
             }
         }
+        this.init();
+        //不知道为什么，但是加了这个init就不会炸了
     }
 
 
@@ -326,24 +318,24 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
         int i = this.leftPos;
         int j = this.topPos;
         //左上角的位置坐标
-        blit(transform, i, j, 0, 0,700,400, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
-        //700和400是图片本身长宽，imageWidth和imageHeight是展示区域长宽
+        blit(transform, i, j, 0, 0, BACKGROUND_RENDER_WIDTH, BACKGROUND_RENDER_HEIGHT, BACKGROUND_REAL_WIDTH, BACKGROUND_RENDER_HEIGHT);
+        //前倆是图片本身长宽，imageWidth和imageHeight是展示区域长宽
         this.renderSkillScroller(transform, x, y);
     }
 
     public void renderSkillScroller(PoseStack transform, int x, int y){
-        int i = (int) (this.leftPos + scrollOffs);
-        //x坐标修正
-        int j = this.topPos + SKILL_SCROLLER_START_FIX_Y;
-        //y坐标修正
-        int u = BACKGROUND_WIDTH;
-        int v = 0;
-        if (mouseClicked(x,y,GLFW.GLFW_MOUSE_BUTTON_LEFT)){
-            v += SKILL_SCROLLER_HEIGHT;
-        }
-        blit(transform,i,j,u,v,
-                SKILL_SCROLLER_WIDTH,SKILL_SCROLLER_HEIGHT,
-                SKILL_SCROLLER_WIDTH,SKILL_SCROLLER_HEIGHT);
+//        int i = (int) (this.leftPos + scrollOffs);
+//        //x坐标修正
+//        int j = this.topPos + SKILL_SCROLLER_START_FIX_Y;
+//        //y坐标修正
+//        int u = BACKGROUND_RENDER_WIDTH;
+//        int v = 0;
+//        if (mouseClicked(x,y,GLFW.GLFW_MOUSE_BUTTON_LEFT)){
+//            v += SKILL_SCROLLER_HEIGHT;
+//        }
+//        blit(transform,i,j,u,v,
+//                SKILL_SCROLLER_WIDTH,SKILL_SCROLLER_HEIGHT,
+//                SKILL_SCROLLER_WIDTH,SKILL_SCROLLER_HEIGHT);
     }
 
     @Override
@@ -352,42 +344,43 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
         return super.mouseScrolled(mouseX, mouseY, scroll);
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        this.scrolling = false;
-
-        int x = this.leftPos + SKILL_SCROLLER_START_FIX_X;
-        int y = (int) (this.topPos + SKILL_SCROLLER_START_FIX_Y + scrollOffs);
-        if (mouseX >= x && mouseX <= x + SKILL_SCROLLER_WIDTH
-        && mouseY >= y && mouseY <= y + SKILL_SCROLLER_HEIGHT){
-            this.scrolling = true;
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
+//    @Override
+//    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+//        this.scrolling = false;
+//
+//        int x = this.leftPos + SKILL_SCROLLER_START_FIX_X;
+//        int y = (int) (this.topPos + SKILL_SCROLLER_START_FIX_Y + scrollOffs);
+//        if (mouseX >= x && mouseX <= x + SKILL_SCROLLER_WIDTH
+//        && mouseY >= y && mouseY <= y + SKILL_SCROLLER_HEIGHT){
+//            this.scrolling = true;
+//        }
+//        return super.mouseClicked(mouseX, mouseY, button);
+//    }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        //拖动
-        if (this.scrolling && this.isSkillScrollBarActive()){
-            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-                //鼠标左键拖
-                int upLimit = this.topPos + SKILL_SCROLLER_START_FIX_Y;
-                this.scrollOffs = Mth.clamp(
-                        upLimit,
-                        upLimit+SKILL_SCROLLER_RANGE_Y,
-                        (float) mouseY);
-                //scrollOffs的范围: 36-147
-                //如果有n(N>5)个技能，就将技能n-5等分
-                //每挪动range/(n-5)个像素，Index++
-                this.startIndex =
-                        (int) ((scrollOffs - upLimit)/(this.menu.getSkillNum()-5));
-            }
-//            else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-//                //鼠标右键拖
+//        //拖动
+//        if (this.scrolling && this.isSkillScrollBarActive()){
+//            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+//                //鼠标左键拖
+//                int upLimit = this.topPos + SKILL_SCROLLER_START_FIX_Y;
+//                this.scrollOffs = Mth.clamp(
+//                        upLimit,
+//                        upLimit+SKILL_SCROLLER_RANGE_Y,
+//                        (float) mouseY);
+//                //scrollOffs的范围: 36-147
+//                //如果有n(N>5)个技能，就将技能n-5等分
+//                //每挪动range/(n-5)个像素，Index++
+//                this.startIndex =
+//                        (int) ((scrollOffs - upLimit)/(this.menu.getSkillNum()-5));
 //            }
-        }
+////            else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+////                //鼠标右键拖
+////            }
+//        }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
+
 
 
     private boolean isSkillScrollBarActive() {

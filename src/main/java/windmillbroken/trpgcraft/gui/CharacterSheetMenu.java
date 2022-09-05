@@ -39,7 +39,7 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
     public static final int SIZ_SLOT = 2;
     public static final int DEX_SLOT = 3;
     public static final int APP_SLOT = 4;
-    public static final int INT_SLOT = 5;
+    public static final int INTE_SLOT = 5;
     public static final int POW_SLOT = 6;
     public static final int EDU_SLOT = 7;
     public static final int LUCK_SLOT = 8;
@@ -55,6 +55,20 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
     //存储的槽量
     public static final int ATTRIBUTE_DATA_COUNT = 9;
     //存储的状态数据量
+
+    protected static final int SLOT_WIDTH = 18;
+    protected static final int SLOT_HEIGHT = 18;
+    //槽的大小
+
+    protected static final int ATT_SLOT_FIX_X = 56;
+    //填充槽在x轴的起始位置基于中心点的修正
+    protected static final int ATT_SLOT_FIX_Y = 50;
+    //填充槽在y轴的起始位置基于中心点的修正
+
+    protected static final int ATT_BUTTON_PADDING_X = 48;
+    //按钮的x轴间距
+    protected static final int ATT_BUTTON_PADDING_Y = 18;
+    //按钮的y轴间距
 
 
 
@@ -97,7 +111,7 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
     }
     public static CharacterSheetMenu fromNetwork(int windowId, Inventory inv,FriendlyByteBuf buf){
         CompoundTag tag = new CompoundTag();
-        if (buf != null && buf.readNbt() != null){
+        if (buf != null){
             tag = buf.readNbt();
         }
         return new CharacterSheetMenu(windowId,
@@ -138,6 +152,7 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
                 this.entity = Objects.requireNonNullElseGet(entities.get(0), () -> inventory.player);
             }else {
                 this.entity = inventory.player;
+                //获取实体
             }
         }else {
             this.entity = inventory.player;
@@ -151,7 +166,7 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             attData.set(SIZ_SLOT,rCap.get().getSiz());
             attData.set(DEX_SLOT,rCap.get().getDex());
             attData.set(APP_SLOT,rCap.get().getApp());
-            attData.set(INT_SLOT,rCap.get().getInte());
+            attData.set(INTE_SLOT,rCap.get().getInte());
             attData.set(POW_SLOT,rCap.get().getPow());
             attData.set(EDU_SLOT,rCap.get().getEdu());
             attData.set(LUCK_SLOT,rCap.get().getLuck());
@@ -161,7 +176,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         this.attRollData = attData;
         //数据存放地,0是能量，1x2y3z
 
-        this.strSlot = this.addSlot(new Slot(container, STR_SLOT, 220, 102) {
+        this.strSlot = this.addSlot(new Slot(container, STR_SLOT,
+                ATT_SLOT_FIX_X + 0 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 0 * ATT_BUTTON_PADDING_Y) {
             //定义输入槽属性，新建了一个Slot，里面包含:container(内容物，上面为空)，指定的槽位ID，x和y轴间距
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
@@ -177,7 +194,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.conSlot = this.addSlot(new Slot(container, CON_SLOT, 220, 134) {
+        this.conSlot = this.addSlot(new Slot(container, CON_SLOT,
+                ATT_SLOT_FIX_X + 0 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 1 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -189,7 +208,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.sizSlot = this.addSlot(new Slot(container, SIZ_SLOT, 220, 166) {
+        this.sizSlot = this.addSlot(new Slot(container, SIZ_SLOT,
+                ATT_SLOT_FIX_X + 0 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 2 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -201,7 +222,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.dexSlot = this.addSlot(new Slot(container, DEX_SLOT, 316, 102) {
+        this.dexSlot = this.addSlot(new Slot(container, DEX_SLOT,
+                ATT_SLOT_FIX_X + 1 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 0 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -213,7 +236,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.appSlot = this.addSlot(new Slot(container, APP_SLOT, 316, 134) {
+        this.appSlot = this.addSlot(new Slot(container, APP_SLOT,
+                ATT_SLOT_FIX_X + 1 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 1 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -225,7 +250,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.intSlot = this.addSlot(new Slot(container, INT_SLOT, 316, 166) {
+        this.intSlot = this.addSlot(new Slot(container, INTE_SLOT,
+                ATT_SLOT_FIX_X + 1 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 2 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -237,7 +264,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.powSlot = this.addSlot(new Slot(container, POW_SLOT, 412, 102) {
+        this.powSlot = this.addSlot(new Slot(container, POW_SLOT,
+                ATT_SLOT_FIX_X + 2 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 0 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -249,7 +278,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.eduSlot = this.addSlot(new Slot(container, EDU_SLOT, 412, 134) {
+        this.eduSlot = this.addSlot(new Slot(container, EDU_SLOT,
+                ATT_SLOT_FIX_X + 2 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 1 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -261,7 +292,9 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
-        this.luckSlot = this.addSlot(new Slot(container, LUCK_SLOT, 412, 166) {
+        this.luckSlot = this.addSlot(new Slot(container, LUCK_SLOT,
+                ATT_SLOT_FIX_X + 2 * ATT_BUTTON_PADDING_X,
+                ATT_SLOT_FIX_Y + 2 * ATT_BUTTON_PADDING_Y) {
             @Override
             public boolean mayPlace(@NotNull ItemStack itemStack) {
                 return CharacterSheetMenu.mayPlace(itemStack);
@@ -278,12 +311,12 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         for(int i = 0; i < 3; ++i) {
             //背包层渲染
             for(int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 9 + j * 18, 137 + i * 18));
             }
         }
 
         for(int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
+            this.addSlot(new Slot(inventory, k, 9 + k * 18, 195));
         }
 
 
@@ -445,7 +478,7 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
                         a.setDex(f);
                     }else if (slot.index == APP_SLOT){
                         a.setApp(f);
-                    }else if (slot.index == INT_SLOT){
+                    }else if (slot.index == INTE_SLOT){
                         a.setInte(f);
                     }else if (slot.index == POW_SLOT){
                         a.setPow(f);
