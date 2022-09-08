@@ -1,5 +1,10 @@
 package windmillbroken.trpgcraft.bean.dice;
 
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.level.Level;
+
+
 /**
  *
  * 使用IDEA编写

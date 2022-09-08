@@ -39,7 +39,7 @@ public enum SexEnum {
     }
 
     public Component toComponent(){
-        return new TranslatableComponent("tips."+ Utils.MOD_ID+".sex."+this.name);
+        return new TranslatableComponent(Utils.tips("sex."+this.name));
     }
 
     SexEnum(int id,String name){

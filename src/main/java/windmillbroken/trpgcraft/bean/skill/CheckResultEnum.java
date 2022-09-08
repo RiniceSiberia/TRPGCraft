@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import windmillbroken.trpgcraft.bean.dice.Dice;
 import windmillbroken.trpgcraft.sound.TrpgCraftSounds;
+import windmillbroken.trpgcraft.util.RollUtils;
 import windmillbroken.trpgcraft.util.Utils;
 
 /**
@@ -74,9 +75,7 @@ public enum CheckResultEnum {
         if (dice != null){
             int result = dice.roll();
             MinecraftServer server = world.getServer();
-            world.playSound((Player)null, entity.getX(), entity.getY(), entity.getZ(),
-                    TrpgCraftSounds.ROLL.get(), SoundSource.NEUTRAL,
-                    0.7F, 1.0F);
+            RollUtils.voice(world,entity);
             Component name = entity.getName();
             if (result <= skillValue){
                 if (result <CRITICAL_SUCCESS_VALUE){
@@ -92,15 +91,7 @@ public enum CheckResultEnum {
                 }
             }
             Component component = getResultMessageToString(c,skillValue,result,name,skillName);
-            if (world.isClientSide()){
-                //只在客户端处理不在多人world
-                if(server != null){
-                    server.getPlayerList().broadcastMessage(
-                            component, ChatType.CHAT, Util.NIL_UUID);
-                }else {
-                    entity.sendMessage(component,Util.NIL_UUID);
-                }
-            }
+            RollUtils.printRollNum(world,component,entity);
         }
         return c;
     }
@@ -114,7 +105,7 @@ public enum CheckResultEnum {
         return new TranslatableComponent(this.getId(),skillValue,rollValue);
     }
     public static Component getResultMessageToString(CheckResultEnum checkResultEnum,int skillValue,int rollValue,Component playerName,Component skillName){
-        return new TranslatableComponent(checkResultEnum.getId() + Utils.MESSAGE,playerName,skillName,rollValue,skillValue);
+        return new TranslatableComponent(checkResultEnum.getId() + Utils.MESSAGE,playerName.getString(),skillName.getString(),rollValue,skillValue);
     }
 
     public String getVoiceId() {

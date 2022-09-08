@@ -107,7 +107,8 @@ public class AttributeUtils {
             case INTE_INDEX -> INTE_NAME;
             case POW_INDEX -> POW_NAME;
             case EDU_INDEX -> EDU_NAME;
-            default -> LUCK_NAME;
+            case LUCK_INDEX -> LUCK_NAME;
+            default -> "error";
         };
     }
     public static Component getAttComponentByIndex(int index){

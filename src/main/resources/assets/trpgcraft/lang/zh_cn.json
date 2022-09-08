@@ -53,12 +53,24 @@
   "attribute.trpgcraft.name.edu": "教育",
   "attribute.trpgcraft.name.luck": "幸运",
 
+  "attribute.trpgcraft.point.total": "总属性值:{0}(含运)/",
+  "attribute.trpgcraft.point.total.not_luck": "{0}(不含运)",
+
+  "attribute.trpgcraft.name.error": "错误属性",
+
   "attribute.trpgcraft.name.sanity": "SAN值",
 
   "tips.trpgcraft.sex.male":"男",
   "tips.trpgcraft.sex.female":"女",
   "tips.trpgcraft.sex.both":"双",
   "tips.trpgcraft.sex.else":"其他",
+
+  "tips.trpgcraft.attribute.roll.a": "左键进行普通检定",
+  "tips.trpgcraft.attribute.roll.b": "右键进行困难检定",
+  "tips.trpgcraft.attribute.roll.c": "中键进行极难检定",
+
+  "trpgcraft.attribute.roll": "重置",
+  "trpgcraft.attribute.roll.message": "{0}的{1}属性已重置 : {2} -> {3}",
 
 
 

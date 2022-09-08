@@ -2,6 +2,9 @@ package windmillbroken.trpgcraft.gui;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,10 +19,13 @@ import windmillbroken.trpgcraft.bean.dice.DiceTypeEnum;
 import windmillbroken.trpgcraft.bean.skill.CheckResultEnum;
 import windmillbroken.trpgcraft.capability.provider.DiceProvider;
 import windmillbroken.trpgcraft.capability.provider.EntitySkillProvider;
+import windmillbroken.trpgcraft.capability.provider.PlayerSkillProvider;
 import windmillbroken.trpgcraft.entity.PuppetEntity;
 import windmillbroken.trpgcraft.event.ContainerTypeRegistry;
 import windmillbroken.trpgcraft.item.dices.DiceItem;
 import windmillbroken.trpgcraft.util.AttributeUtils;
+import windmillbroken.trpgcraft.util.RollUtils;
+import windmillbroken.trpgcraft.util.Utils;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,12 +49,11 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
     public static final int POW_SLOT = 6;
     public static final int EDU_SLOT = 7;
     public static final int LUCK_SLOT = 8;
-    public static final int SKILL_ROLL_SLOT = 9;
 
-    private static final int INV_SLOT_START = 2;
-    private static final int INV_SLOT_END = 29;
-    private static final int USE_ROW_SLOT_START = 29;
-    private static final int USE_ROW_SLOT_END = 38;
+    private static final int INV_SLOT_START = 9;
+    private static final int INV_SLOT_END = 36;
+    private static final int USE_ROW_SLOT_START = 36;
+    private static final int USE_ROW_SLOT_END = 45;
     //用户背包相关 不理
 
     public static final int SLOT_COUNT = 9;
@@ -60,26 +65,31 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
     protected static final int SLOT_HEIGHT = 18;
     //槽的大小
 
-    protected static final int ATT_SLOT_FIX_X = 56;
-    //填充槽在x轴的起始位置基于中心点的修正
-    protected static final int ATT_SLOT_FIX_Y = 50;
-    //填充槽在y轴的起始位置基于中心点的修正
+    protected static final int ATT_SLOT_FIX_X = 49;
+    //填充槽在x轴的起始位置基于leftPos的修正
+    protected static final int ATT_SLOT_FIX_Y = 61;
+    //填充槽在y轴的起始位置基于topPos的修正
 
-    protected static final int ATT_BUTTON_PADDING_X = 48;
+    protected static final int ATT_BUTTON_PADDING_X = 72;
     //按钮的x轴间距
-    protected static final int ATT_BUTTON_PADDING_Y = 18;
+    protected static final int ATT_BUTTON_PADDING_Y = 22;
     //按钮的y轴间距
 
 
+    private final Container container;
+    //存放slot
 
     //方块实体
     private final ContainerData attRollData;
     //存放骰子丢出来的结果
 
+
     protected final Level level;
     //所在世界
 
     protected final Entity entity;
+
+    private final ContainerLevelAccess access;
 
 
     final Slot strSlot;
@@ -136,6 +146,8 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         this.level = inventory.player.level;
         //世界获取
 
+        this.access = ContainerLevelAccess.NULL;
+
         if (tag != null){
             int type = tag.getInt("entity_type");
             if (type == 0){
@@ -159,7 +171,7 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         }
 
 
-        var rCap = this.entity.getCapability(EntitySkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve();
+        var rCap = this.entity.getCapability(PlayerSkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve();
         if (rCap.isPresent()) {
             attData.set(STR_SLOT,rCap.get().getStr());
             attData.set(CON_SLOT,rCap.get().getCon());
@@ -173,8 +185,6 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         }
 
 
-        this.attRollData = attData;
-        //数据存放地,0是能量，1x2y3z
 
         this.strSlot = this.addSlot(new Slot(container, STR_SLOT,
                 ATT_SLOT_FIX_X + 0 * ATT_BUTTON_PADDING_X,
@@ -306,17 +316,21 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             }
         });
 
+        this.container = container;
+
+        this.attRollData = attData;
+        //数据存放地,0是能量，1x2y3z
         this.addDataSlots(attData);
 
         for(int i = 0; i < 3; ++i) {
             //背包层渲染
             for(int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 9 + j * 18, 137 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 29 + j * 18, 157 + i * 18));
             }
         }
 
         for(int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(inventory, k, 9 + k * 18, 195));
+            this.addSlot(new Slot(inventory, k, 29 + k * 18, 215));
         }
 
 
@@ -375,30 +389,44 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
             //获取背包物品所在的itemStack
             itemstack = itemstack1.copy();
             //复制一份itemstack，作为移动物品的记录
-            if (index != CON_SLOT && index != STR_SLOT) {
-                //且目标不是ui槽
-                if (CharacterSheetMenu.mayPlace(itemstack1) && itemstack1.getCount() == 3) {
+            if (!(index >= STR_SLOT && index <= LUCK_SLOT)) {
+                //移动物品所在地区不是ui槽
+                if (CharacterSheetMenu.mayPlace(itemstack1)) {
                     //如果目标能拿来充电
-                    if (!this.moveItemStackTo(itemstack1, STR_SLOT, STR_SLOT + 1, false)) {
-                        //尝试移动物品，不行就empty
+                    if (this.moveItemStackTo(itemstack1, STR_SLOT, SLOT_COUNT, true)) {
+                        //尝试移动物品到ui槽，不行就empty
                         return ItemStack.EMPTY;
+                    } else if (index >= INV_SLOT_START && index < INV_SLOT_END) {
+                        //如果index在背包栏里面,不能充
+                        if (this.moveItemStackTo(itemstack1, USE_ROW_SLOT_START, USE_ROW_SLOT_END, true)) {
+                            //尝试移动到物品栏
+                            return ItemStack.EMPTY;
+                        }
+                    } else if (index >= USE_ROW_SLOT_START && index <= USE_ROW_SLOT_END) {
+                        //如果目录是手持栏里面,不能充
+                        //尝试移动物品，不行就empty
+                        if (this.moveItemStackTo(itemstack1, INV_SLOT_START, INV_SLOT_END, true)) {
+                            return ItemStack.EMPTY;
+                        }
                     }
                 } else if (index >= INV_SLOT_START && index < INV_SLOT_END) {
-                    //如果index在背包栏里面
-                    if (!this.moveItemStackTo(itemstack1, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false)) {
-                        //尝试移动物品，不行就empty
+                    //如果index在背包栏里面,不能充
+                    if (this.moveItemStackTo(itemstack1, USE_ROW_SLOT_START, USE_ROW_SLOT_END, true)) {
+                        //尝试移动到物品栏
                         return ItemStack.EMPTY;
                     }
-                } else if (index >= USE_ROW_SLOT_START
-                        && index < USE_ROW_SLOT_END
-                        && !this.moveItemStackTo(itemstack1, INV_SLOT_START, INV_SLOT_END, false)) {
-                    //如果目录是手持栏里面
+                } else if (index >= USE_ROW_SLOT_START && index <= USE_ROW_SLOT_END) {
+                    //如果目录是手持栏里面,不能充
                     //尝试移动物品，不行就empty
+                    if (this.moveItemStackTo(itemstack1, INV_SLOT_START, INV_SLOT_END, true)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            } else{
+                if (this.moveItemStackTo(itemstack1, INV_SLOT_START, USE_ROW_SLOT_END, true)) {
+                    //目标是ui槽，移动到物品栏和手持栏里
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, INV_SLOT_START, USE_ROW_SLOT_END, false)) {
-                //目标是ui槽，移动到物品栏和手持栏里
-                return ItemStack.EMPTY;
             }
 
             if (itemstack1.isEmpty()) {
@@ -422,6 +450,10 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         return slot.getItem().getCount() == slot.getMaxStackSize();
     }
 
+    public boolean isFull(int slotId){
+        return this.slots.get(slotId).getItem().getCount() == this.slots.get(slotId).getMaxStackSize();
+    }
+
     public boolean buttonAction(int attIndex,int degree){
         if(this.isFull(this.slots.get(attIndex))) {
             //判断可以点击按钮的条件
@@ -433,6 +465,14 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         }else if (this.entity.getCapability(EntitySkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve().isPresent()){
             var cap = this.entity.getCapability(EntitySkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve().get();
             int successValue = cap.getSkillValueByIndex(attIndex);
+            switch (degree){
+                case 1:
+                    successValue /= 2;
+                case 2:
+                    successValue /= 5;
+                default:
+
+            }
             CheckResultEnum result = CheckResultEnum.skillCheck(
                     new DiceImpl(100,DiceTypeEnum.NORMAL),
                     AttributeUtils.getAttComponentByIndex(attIndex),
@@ -466,31 +506,51 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         }
         final int f = rollNum;
         this.attRollData.set(slot.index, rollNum);
+        var test = entity.getCapability(EntitySkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve();
+        AtomicInteger oldValue = new AtomicInteger();
         entity.getCapability(EntitySkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve().ifPresentOrElse(
                 (a) -> {
                     if (slot.index == STR_SLOT){
+                        oldValue.set(a.getStr());
                         a.setStr(f);
                     }else if (slot.index == CON_SLOT){
+                        oldValue.set(a.getCon());
                         a.setCon(f);
                     }else if (slot.index == SIZ_SLOT){
+                        oldValue.set(a.getSiz());
                         a.setSiz(f);
                     }else if (slot.index == DEX_SLOT){
+                        oldValue.set(a.getDex());
                         a.setDex(f);
                     }else if (slot.index == APP_SLOT){
+                        oldValue.set(a.getApp());
                         a.setApp(f);
                     }else if (slot.index == INTE_SLOT){
+                        oldValue.set(a.getInte());
                         a.setInte(f);
                     }else if (slot.index == POW_SLOT){
+                        oldValue.set(a.getPow());
                         a.setPow(f);
                     }else if (slot.index == EDU_SLOT){
+                        oldValue.set(a.getEdu());
                         a.setEdu(f);
                     }else if (slot.index == LUCK_SLOT){
+                        oldValue.set(a.getLuck());
                         a.setLuck(f);
+                    }else {
+                        oldValue.set(0);
                     }
                     setAttValueByIndex(slot.index,f);
                 },
                 () -> {}
         );
+        Component attName = AttributeUtils.getAttComponentByIndex(slot.index);
+        Component c = new TranslatableComponent(
+                Utils.message("attribute.roll"),
+                entity.getName().getString(),
+                attName.getString(),
+                oldValue.get(),f);
+        RollUtils.printRollNum(this.level,c,entity);
     }
 
     public int getAttValueByIndex(int index){
@@ -508,12 +568,34 @@ public class CharacterSheetMenu extends AbstractContainerMenu {
         return true;
     }
 
-    public int getSkillNum(){
+
+    protected int getSkillNum(){
         AtomicInteger n = new AtomicInteger();
         this.entity.getCapability(EntitySkillProvider.SKILL_CAPABILITY).resolve().ifPresentOrElse(
                 (a) -> n.set(a.getSkillGraph().getHasStudiedSkill().size()),
                 () -> {}
         );
         return n.get();
+    }
+
+    protected int getTotalSkillValue(boolean containLuck){
+        AtomicInteger value = new AtomicInteger();
+        this.entity.getCapability(EntitySkillProvider.STAND_ATTRIBUTE_CAPABILITY).resolve().ifPresentOrElse(
+                (a) -> {
+                    value.addAndGet(a.getStr());
+                    value.addAndGet(a.getCon());
+                    value.addAndGet(a.getSiz());
+                    value.addAndGet(a.getDex());
+                    value.addAndGet(a.getApp());
+                    value.addAndGet(a.getInte());
+                    value.addAndGet(a.getPow());
+                    value.addAndGet(a.getEdu());
+                    if (containLuck){
+                        value.addAndGet(a.getLuck());
+                    }
+                },
+                () -> {}
+        );
+        return value.get();
     }
 }

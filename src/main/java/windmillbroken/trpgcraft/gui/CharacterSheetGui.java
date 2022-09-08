@@ -2,22 +2,29 @@ package windmillbroken.trpgcraft.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 import windmillbroken.trpgcraft.bean.description.Description;
 import windmillbroken.trpgcraft.bean.skill.SkillGraph;
 import windmillbroken.trpgcraft.util.AttributeUtils;
 import windmillbroken.trpgcraft.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static windmillbroken.trpgcraft.gui.CharacterSheetMenu.*;
 
 /**
@@ -31,9 +38,9 @@ import static windmillbroken.trpgcraft.gui.CharacterSheetMenu.*;
 @OnlyIn(Dist.CLIENT)
 public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMenu> {
 
-    EditBox editBox;
+//    EditBox editBox;
 
-    Button[][] attributeButtons;
+    Button[] attributeButtons;
     //按钮组，0-8为属性。第二个维度为按钮款式。
     ResourceLocation background = new ResourceLocation(Utils.MOD_ID,"textures/gui/character_sheet_ui.png");
     //背景贴图
@@ -44,11 +51,11 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
 
     //Forge的滑动条
     private static final int BACKGROUND_REAL_WIDTH = 300;
-    private static final int BACKGROUND_REAL_HEIGHT = 220;
+    private static final int BACKGROUND_REAL_HEIGHT = 240;
 
 
-    private static final int BACKGROUND_RENDER_WIDTH = 199;
-    private static final int BACKGROUND_RENDER_HEIGHT = 220;
+    private static final int BACKGROUND_RENDER_WIDTH = 239;
+    private static final int BACKGROUND_RENDER_HEIGHT = 240;
 
 //    private static final int SKILL_SCROLLER_WIDTH = 16;
 //    private static final int SKILL_SCROLLER_HEIGHT = 24;
@@ -127,7 +134,8 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
         this.component = titleIn;
         this.scrollOffs = 0.0F;
         this.startIndex = 0;
-        inventoryLabelY += 100;
+        inventoryLabelX += 24;
+        inventoryLabelY += 73;
         this.imageWidth = BACKGROUND_RENDER_WIDTH;
         this.imageHeight = BACKGROUND_RENDER_HEIGHT;
 //
@@ -194,54 +202,75 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
     @Override
     public void init(){
         this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
-        this.editBox = new EditBox(
-                this.font,
-                this.width/2-100,
-                80,
-                200,
-                20,
-                new TextComponent("editBox"));
-        this.addWidget(this.editBox);
+//        this.editBox = new EditBox(
+//                this.font,
+//                this.width/2-100,
+//                80,
+//                200,
+//                20,
+//                new TextComponent("editBox"));
+//        this.addWidget(this.editBox);
 
         //x坐标，y坐标，长，宽，内部文字，触发事件，悬浮文字
         //居中 = (x坐标-长度)/2
 
-        this.attributeButtons = new Button[ATT_BUTTON_NUM][ATT_BUTTON_TYPE];
+        this.attributeButtons = new Button[ATT_BUTTON_NUM];
         for (int row = 0; row < ATT_BUTTON_ROW; row++){
             for (int col = 0;col <ATT_BUTTON_COL; col++){
-                for (int type = 0; type < ATT_BUTTON_TYPE; type++){
-                    int width = SLOT_WIDTH;
-                    int height = SLOT_HEIGHT /2;
-                    if (type >0){
-                        //2号和3号，小号按钮,宽度/2
-                        width /= 2;
-                    }
-                    int xPos = this.leftPos + ATT_SLOT_FIX_X + row * ATT_BUTTON_PADDING_X - SLOT_WIDTH;
-                    int yPos = this.topPos + ATT_SLOT_FIX_Y + col * ATT_BUTTON_PADDING_Y;
-                    if (type > 0){
-                        yPos += SLOT_HEIGHT /2;
-                        if (type > 1){
-                            xPos += SLOT_WIDTH /2;
-                        }
-                    }
-                    int attIndex = row + col * ATT_BUTTON_ROW;
-//                    Component component = AttributeUtils.getAttComponentByIndex(attIndex);
-                    Component component = new TextComponent("");
-                    int finalType = type;
-                    this.attributeButtons[attIndex][type] = new Button(
-                            xPos,
-                            yPos,
-                            width,
-                            height,
-                            component,
-                            (button) -> {
-                                this.menu.buttonAction(attIndex, finalType);
-                            },
-                            Button.NO_TOOLTIP
-                    );
-
-                    this.addWidget(this.attributeButtons[attIndex][type]);
+                int width = SLOT_WIDTH;
+                int height = SLOT_HEIGHT;
+                int xPos = this.leftPos + ATT_SLOT_FIX_X + row * ATT_BUTTON_PADDING_X - SLOT_WIDTH-2;
+                int yPos = this.topPos + ATT_SLOT_FIX_Y + col * ATT_BUTTON_PADDING_Y -1;
+                int attIndex = row  * ATT_BUTTON_COL + col;
+                Component component = new TextComponent(String.valueOf(this.menu.getAttValueByIndex(attIndex)));
+                if (this.menu.isFull(attIndex)){
+                    component = new TranslatableComponent(Utils.MOD_ID + ".attribute.roll");
                 }
+                Component tipA = new TranslatableComponent(Utils.tips("attribute.roll.a"));
+                Component tipB = new TranslatableComponent(Utils.tips("attribute.roll.b"));
+                Component tipC = new TranslatableComponent(Utils.tips("attribute.roll.c"));
+                //提醒文字
+                List<Component> tips = new ArrayList<>();
+                tips.add(tipA);
+                tips.add(tipB);
+                tips.add(tipC);
+                this.attributeButtons[attIndex] = new Button(
+                        xPos,
+                        yPos,
+                        width,
+                        height,
+                        component,
+                        (button) -> {
+
+                        },
+                        (button, matrixStack, i, j) -> {
+                            this.renderComponentTooltip(matrixStack, tips, i, j);
+                        }
+                ){
+                    @Override
+                    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                        boolean flag = false;
+                        if (mouseX >= this.x && mouseX < this.x + this.width && mouseY >= this.y && mouseY < this.y + this.height) {
+                            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT){
+                                //左键
+                                menu.buttonAction(attIndex,0);
+                            }else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT){
+                                //右键
+                                menu.buttonAction(attIndex,1);
+                            }else if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE){
+                                //中键
+                                menu.buttonAction(attIndex,2);
+                            }
+                            flag = true;
+                            this.onPress();
+                        }
+                        return flag;
+                    }
+
+
+                };
+                this.addWidget(this.attributeButtons[attIndex]);
+
             }
         }
 
@@ -296,10 +325,23 @@ public class CharacterSheetGui extends AbstractContainerScreen<CharacterSheetMen
     public void render(@NotNull PoseStack transform, int mouseX, int mouseY, float partialTicks) {
         super.render(transform, mouseX, mouseY, partialTicks);
         //标题渲染
-        for (Button[] a : this.attributeButtons){
+        Component c1 = new TranslatableComponent("attribute."+Utils.MOD_ID + ".point.total",
+                this.menu.getTotalSkillValue(true));
+        Component c2 = new TranslatableComponent("attribute."+Utils.MOD_ID + ".point.total.not_luck",
+                this.menu.getTotalSkillValue(false));
+        this.font.draw(transform,c1.getString(),
+                this.leftPos +8, this.topPos + 20, 4210752);
+        this.font.draw(transform,c2.getString(),
+                this.leftPos +46, this.topPos + 30, 4210752);
+        for (int row =0; row < ATT_BUTTON_ROW;row++){
             //属性检定按钮渲染
-            for (Button b : a){
-                b.render(transform,mouseX,mouseY,partialTicks);
+            for (int col = 0; col < ATT_BUTTON_COL;col++){
+                int attIndex = row * ATT_BUTTON_COL + col;
+                this.font.draw(transform,AttributeUtils.getAttComponentByIndex(attIndex).getString(),
+                        this.leftPos + ATT_SLOT_FIX_X + row * ATT_BUTTON_PADDING_X - SLOT_WIDTH*2-4,
+                        this.topPos + ATT_SLOT_FIX_Y + col * ATT_BUTTON_PADDING_Y+3,
+                        4210752);
+                this.attributeButtons[attIndex].render(transform,mouseX,mouseY,partialTicks);
             }
         }
         this.init();

@@ -12,9 +12,11 @@ public class Utils {
     public static final String SHEET_ATTRIBUTE = SHEET + "attribute.";
     public static final String MESSAGE = ".message";
     public static final String SKILL = MOD_ID + ".skill.";
+    public static final String TIPS = "tips.";
 
     public static String message(String s){
         return MOD_ID +"."+ s + MESSAGE;
     }
+    public static String tips(String s){return TIPS + MOD_ID + "." + s;}
 
 }

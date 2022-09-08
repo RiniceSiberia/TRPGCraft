@@ -26,6 +26,7 @@ import windmillbroken.trpgcraft.bean.dice.Dice;
 import windmillbroken.trpgcraft.bean.dice.DiceImpl;
 import windmillbroken.trpgcraft.bean.dice.DiceTypeEnum;
 import windmillbroken.trpgcraft.sound.TrpgCraftSounds;
+import windmillbroken.trpgcraft.util.RollUtils;
 import windmillbroken.trpgcraft.util.Utils;
 
 import java.util.ArrayList;
@@ -97,25 +98,13 @@ public class DiceItem extends Item{
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, @NotNull InteractionHand interactionHand) {
-        MinecraftServer server = world.getServer();
         ItemStack stack = player.getItemInHand(interactionHand);
-        world.playSound((Player)null, player.getX(), player.getY(), player.getZ(),
-                TrpgCraftSounds.ROLL.get(), SoundSource.NEUTRAL,
-                0.7F, 1.0F);
         //4.0F / (world.getRandom().nextFloat() * 1.0F + 7.5F
 
         int roll = roll(stack);
         Component component =new TranslatableComponent(Utils.message("roll"),roll);
-        if (world.isClientSide()){
-            //只在客户端处理不在多人world
-            if(server != null){
-                server.getPlayerList().broadcastMessage(component, ChatType.CHAT, Util.NIL_UUID);
-            }else {
-                player.sendMessage(component,Util.NIL_UUID);
-            }
-
-
-        }
+        RollUtils.voice(world,player);
+        RollUtils.printRollNum(world,component,player);
         return super.use(world, player, interactionHand);
     }
 
